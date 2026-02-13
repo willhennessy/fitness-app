@@ -2,6 +2,8 @@ import SwiftUI
 
 struct RestDay: View {
     let dayName: String
+    @EnvironmentObject private var storage: StorageManager
+    @State private var exportFileURL: IdentifiableURL?
 
     private let recoveryTips = [
         "Take a gentle walk outside",
@@ -56,13 +58,56 @@ struct RestDay: View {
             .padding(.horizontal, 16)
 
             Spacer()
+
+            Button {
+                exportData()
+            } label: {
+                Text("Export Data")
+                    .font(.system(size: 14))
+                    .foregroundColor(.appTextMuted)
+            }
+            .padding(.bottom, 16)
+            .sheet(item: $exportFileURL) { item in
+                ShareSheet(items: [item.url])
+            }
         }
     }
+
+    private func exportData() {
+        let entries = storage.getEntries()
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+
+        guard let data = try? encoder.encode(entries) else { return }
+
+        let tempDir = FileManager.default.temporaryDirectory
+        let fileURL = tempDir.appendingPathComponent("workout-data.json")
+        try? data.write(to: fileURL)
+
+        exportFileURL = IdentifiableURL(url: fileURL)
+    }
+}
+
+struct IdentifiableURL: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 #Preview {
     ZStack {
         Color.appBackground.ignoresSafeArea()
         RestDay(dayName: "Thursday")
+            .environmentObject(StorageManager.shared)
     }
 }
