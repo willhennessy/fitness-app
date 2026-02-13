@@ -30,3 +30,4 @@ Podfile.lock
 # Editor directories
 .vscode/
 .idea/
+.claude/
