@@ -71,13 +71,13 @@ struct ExerciseDetail: View {
                             .background(Color.appBorder)
                             .padding(.horizontal, 16)
 
-                        WorkoutStepper(label: "Sets", value: $sets, range: 1...20, step: 1)
+                        WorkoutStepper(label: "Reps", value: $reps, range: 1...100, step: 1)
 
                         Divider()
                             .background(Color.appBorder)
                             .padding(.horizontal, 16)
 
-                        WorkoutStepper(label: "Reps", value: $reps, range: 1...100, step: 1)
+                        WorkoutStepper(label: "Sets", value: $sets, range: 1...20, step: 1)
                     }
                     .background(Color.appSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 12))

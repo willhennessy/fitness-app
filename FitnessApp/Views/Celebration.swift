@@ -31,7 +31,7 @@ struct Celebration: View {
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.appText)
 
-                Text("You pushed your edge!")
+                Text("You pushed your edge")
                     .font(.system(size: 17))
                     .foregroundColor(.appTextMuted)
 
@@ -40,7 +40,7 @@ struct Celebration: View {
                 Button {
                     onDismiss()
                 } label: {
-                    Text("Let's go tackle the day")
+                    Text("Carpe diem")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.appBackground)
                         .frame(maxWidth: .infinity)
