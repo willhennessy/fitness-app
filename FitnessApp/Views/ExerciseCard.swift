@@ -3,7 +3,7 @@ import SwiftUI
 struct ExerciseCard: View {
     let exercise: Exercise
     let isCompleted: Bool
-    let loggedWeight: Int?
+    let loggedExercise: LoggedExercise?
 
     var body: some View {
         HStack(spacing: 12) {
@@ -67,7 +67,13 @@ struct ExerciseCard: View {
     }
 
     private var subtitleText: String {
-        if let weight = loggedWeight, weight > 0 {
+        if exercise.isRun {
+            if let d = loggedExercise?.distanceMiles, let t = loggedExercise?.timeMinutes {
+                return String(format: "%.1f mi \u{00B7} %d min", d, t)
+            }
+            return "5k (3.1 miles) \u{00B7} 30 min"
+        }
+        if let weight = loggedExercise?.weightUsed, weight > 0 {
             return "\(weight) lbs \u{00B7} \(exercise.sets) sets \u{00D7} \(exercise.reps)"
         }
         return "\(exercise.sets) sets \u{00D7} \(exercise.reps)"
@@ -81,12 +87,17 @@ struct ExerciseCard: View {
             ExerciseCard(
                 exercise: weeklyRoutine[1].exercises[0],
                 isCompleted: false,
-                loggedWeight: nil
+                loggedExercise: nil
             )
             ExerciseCard(
                 exercise: weeklyRoutine[1].exercises[0],
                 isCompleted: true,
-                loggedWeight: 45
+                loggedExercise: LoggedExercise(
+                    exerciseId: "squats", weightUsed: 45,
+                    setsCompleted: 4, repsCompleted: 6,
+                    distanceMiles: nil, timeMinutes: nil,
+                    timestamp: Date()
+                )
             )
         }
         .padding()

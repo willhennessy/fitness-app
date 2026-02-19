@@ -156,7 +156,7 @@ struct DayView: View {
                     if let exercises = routine?.exercises {
                         ForEach(Array(exercises.enumerated()), id: \.element.id) { index, exercise in
                             let isCompleted = storage.isExerciseCompleted(exercise.id, for: currentDate)
-                            let loggedWeight = storage.getLoggedExercise(exercise.id, for: currentDate)?.weightUsed
+                            let loggedExercise = storage.getLoggedExercise(exercise.id, for: currentDate)
 
                             Button {
                                 selectedExerciseIndex = index
@@ -167,7 +167,7 @@ struct DayView: View {
                                 ExerciseCard(
                                     exercise: exercise,
                                     isCompleted: isCompleted,
-                                    loggedWeight: loggedWeight
+                                    loggedExercise: loggedExercise
                                 )
                             }
                             .buttonStyle(PlainButtonStyle())

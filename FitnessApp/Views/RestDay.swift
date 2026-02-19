@@ -6,11 +6,9 @@ struct RestDay: View {
     @State private var exportFileURL: IdentifiableURL?
 
     private let recoveryTips = [
-        "Take a gentle walk outside",
-        "Foam roll or do light stretching",
-        "Focus on hydration and nutrition",
-        "Get 7-9 hours of quality sleep",
-        "Practice deep breathing or meditation"
+        "Stretch in the morning",
+        "Foam roll muscles",
+        "Get 8hrs of sleep"
     ]
 
     var body: some View {
@@ -52,6 +50,7 @@ struct RestDay: View {
                     }
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(20)
             .background(Color.appSurface)
             .clipShape(RoundedRectangle(cornerRadius: 12))

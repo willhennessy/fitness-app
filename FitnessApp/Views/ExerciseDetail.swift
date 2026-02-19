@@ -12,6 +12,8 @@ struct ExerciseDetail: View {
     @State private var weight: Int = 0
     @State private var sets: Int = 0
     @State private var reps: Int = 10
+    @State private var distance: Double = 3.1
+    @State private var time: Int = 31
     @State private var isSaved: Bool = false
 
     var body: some View {
@@ -65,19 +67,35 @@ struct ExerciseDetail: View {
 
                     // Input Section
                     VStack(spacing: 0) {
-                        WorkoutStepper(label: "Weight", value: $weight, range: 0...500, step: 5)
+                        if exercise.isRun {
+                            DoubleWorkoutStepper(
+                                label: "Distance",
+                                value: $distance,
+                                range: 0.1...26.2,
+                                step: 0.1,
+                                format: { String(format: "%.1f mi", $0) }
+                            )
 
-                        Divider()
-                            .background(Color.appBorder)
-                            .padding(.horizontal, 16)
+                            Divider()
+                                .background(Color.appBorder)
+                                .padding(.horizontal, 16)
 
-                        WorkoutStepper(label: "Reps", value: $reps, range: 1...100, step: 1)
+                            WorkoutStepper(label: "Time (min)", value: $time, range: 1...180, step: 1)
+                        } else {
+                            WorkoutStepper(label: "Weight", value: $weight, range: 0...500, step: 5)
 
-                        Divider()
-                            .background(Color.appBorder)
-                            .padding(.horizontal, 16)
+                            Divider()
+                                .background(Color.appBorder)
+                                .padding(.horizontal, 16)
 
-                        WorkoutStepper(label: "Sets", value: $sets, range: 1...20, step: 1)
+                            WorkoutStepper(label: "Reps", value: $reps, range: 1...100, step: 1)
+
+                            Divider()
+                                .background(Color.appBorder)
+                                .padding(.horizontal, 16)
+
+                            WorkoutStepper(label: "Sets", value: $sets, range: 1...20, step: 1)
+                        }
                     }
                     .background(Color.appSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -170,6 +188,21 @@ struct ExerciseDetail: View {
     }
 
     private func loadValues() {
+        if exercise.isRun {
+            if let logged = storage.getLoggedExercise(exercise.id, for: date),
+               let d = logged.distanceMiles, let t = logged.timeMinutes {
+                distance = d
+                time = t
+                isSaved = true
+            } else {
+                let (d, t) = getLastRunValues(for: exercise, on: date, storage: storage)
+                distance = d
+                time = t
+                isSaved = false
+            }
+            return
+        }
+
         // Check if already logged today
         if let logged = storage.getLoggedExercise(exercise.id, for: date) {
             weight = logged.weightUsed
@@ -188,13 +221,28 @@ struct ExerciseDetail: View {
     }
 
     private func saveExercise() {
-        let logged = LoggedExercise(
-            exerciseId: exercise.id,
-            weightUsed: weight,
-            setsCompleted: sets,
-            repsCompleted: reps,
-            timestamp: Date()
-        )
+        let logged: LoggedExercise
+        if exercise.isRun {
+            logged = LoggedExercise(
+                exerciseId: exercise.id,
+                weightUsed: 0,
+                setsCompleted: 0,
+                repsCompleted: 0,
+                distanceMiles: distance,
+                timeMinutes: time,
+                timestamp: Date()
+            )
+        } else {
+            logged = LoggedExercise(
+                exerciseId: exercise.id,
+                weightUsed: weight,
+                setsCompleted: sets,
+                repsCompleted: reps,
+                distanceMiles: nil,
+                timeMinutes: nil,
+                timestamp: Date()
+            )
+        }
 
         storage.logExercise(logged, for: date)
         isSaved = true

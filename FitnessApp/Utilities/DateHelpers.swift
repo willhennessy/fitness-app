@@ -45,6 +45,25 @@ func parseReps(_ reps: String) -> Int {
     return numbers.first ?? 10
 }
 
+func getLastRunValues(for exercise: Exercise, on date: Date, storage: StorageManager) -> (distance: Double, time: Int) {
+    let calendar = Calendar.current
+
+    for weeksBack in 1...4 {
+        if let pastDate = calendar.date(byAdding: .weekOfYear, value: -weeksBack, to: date) {
+            let pastDateISO = formatISO(pastDate)
+
+            if let entry = storage.getEntry(for: pastDateISO),
+               let logged = entry.exercises.first(where: { $0.exerciseId == exercise.id }),
+               let distance = logged.distanceMiles,
+               let time = logged.timeMinutes {
+                return (distance, time)
+            }
+        }
+    }
+
+    return (3.1, 31)
+}
+
 func getLastWeekValues(for exercise: Exercise, on date: Date, storage: StorageManager) -> (weight: Int, sets: Int, reps: Int) {
     let calendar = Calendar.current
 

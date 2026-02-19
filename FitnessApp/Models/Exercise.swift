@@ -8,4 +8,5 @@ struct Exercise: Identifiable, Codable {
     let images: [String]
     let cues: [String]
     let why: String
+    var isRun: Bool = false
 }

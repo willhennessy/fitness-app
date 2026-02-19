@@ -168,16 +168,17 @@ let weeklyRoutine: [DayRoutine] = [
         exercises: [
             Exercise(
                 id: "run-5k",
-                name: "Run 5k",
+                name: "Run",
                 sets: 1,
-                reps: "25-35 min",
+                reps: "3.1 mi",
                 images: [],
                 cues: [
                     "You should be able to speak in full sentences",
                     "Nasal breathing most of the time if possible",
                     "Finish feeling better, not destroyed"
                 ],
-                why: "Aerobic base is a major lever for daily energy, stress tolerance, and long-term cardiovascular health."
+                why: "Aerobic base is a major lever for daily energy, stress tolerance, and long-term cardiovascular health.",
+                isRun: true
             ),
             Exercise(
                 id: "farmers-carry",
