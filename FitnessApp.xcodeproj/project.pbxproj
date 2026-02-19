@@ -24,6 +24,8 @@
 		015 /* Celebration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115 /* Celebration.swift */; };
 		016 /* WorkoutStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116 /* WorkoutStepper.swift */; };
 		017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 117 /* Assets.xcassets */; };
+		018 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118 /* ImageCache.swift */; };
+		019 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119 /* CachedAsyncImage.swift */; };
 		BE7026052F3D9BB5008F7391 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = BE7026042F3D9BB5008F7391 /* AppIcon.icon */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +48,8 @@
 		115 /* Celebration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Celebration.swift; sourceTree = "<group>"; };
 		116 /* WorkoutStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutStepper.swift; sourceTree = "<group>"; };
 		117 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		118 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		119 /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedAsyncImage.swift; sourceTree = "<group>"; };
 		BE7026042F3D9BB5008F7391 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -116,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				107 /* StorageManager.swift */,
+				118 /* ImageCache.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -138,6 +143,7 @@
 				114 /* RestDay.swift */,
 				115 /* Celebration.swift */,
 				116 /* WorkoutStepper.swift */,
+				119 /* CachedAsyncImage.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -236,6 +242,8 @@
 				014 /* RestDay.swift in Sources */,
 				015 /* Celebration.swift in Sources */,
 				016 /* WorkoutStepper.swift in Sources */,
+				018 /* ImageCache.swift in Sources */,
+				019 /* CachedAsyncImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

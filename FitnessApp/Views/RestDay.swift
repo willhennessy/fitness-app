@@ -6,7 +6,7 @@ struct RestDay: View {
     @State private var exportFileURL: IdentifiableURL?
 
     private let recoveryTips = [
-        "Stretch in the morning",
+        "Stretch",
         "Foam roll muscles",
         "Get 8hrs of sleep"
     ]

@@ -8,20 +8,13 @@ struct ExerciseCard: View {
     var body: some View {
         HStack(spacing: 12) {
             ZStack(alignment: .topTrailing) {
-                AsyncImage(url: URL(string: exercise.images.first ?? "")) { phase in
-                    switch phase {
-                    case .empty:
-                        placeholderImage
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .failure:
-                        placeholderImage
-                    @unknown default:
-                        placeholderImage
-                    }
-                }
+                CachedAsyncImage(
+                    url: URL(string: exercise.images.first ?? ""),
+                    content: { image in
+                        image.resizable().aspectRatio(contentMode: .fill)
+                    },
+                    placeholder: { placeholderImage }
+                )
                 .frame(width: 64, height: 64)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 

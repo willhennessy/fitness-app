@@ -40,20 +40,13 @@ struct ExerciseDetail: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     // Image
-                    AsyncImage(url: URL(string: exercise.images.first ?? "")) { phase in
-                        switch phase {
-                        case .empty:
-                            placeholderImage
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(16/9, contentMode: .fill)
-                        case .failure:
-                            placeholderImage
-                        @unknown default:
-                            placeholderImage
-                        }
-                    }
+                    CachedAsyncImage(
+                        url: URL(string: exercise.images.first ?? ""),
+                        content: { image in
+                            image.resizable().aspectRatio(16/9, contentMode: .fill)
+                        },
+                        placeholder: { placeholderImage }
+                    )
                     .frame(height: 200)
                     .frame(maxWidth: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
