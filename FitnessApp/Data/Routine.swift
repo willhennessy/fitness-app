@@ -171,7 +171,7 @@ let weeklyRoutine: [DayRoutine] = [
                 name: "Run",
                 sets: 1,
                 reps: "3.1 mi",
-                images: [],
+                images: ["https://hips.hearstapps.com/hmg-prod/images/young-man-running-outdoors-in-morning-royalty-free-image-1717693611.jpg?crop=0.628xw:0.940xh;0.0705xw,0.0600xh&resize=1200:*"],
                 cues: [
                     "You should be able to speak in full sentences",
                     "Nasal breathing most of the time if possible",
