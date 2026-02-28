@@ -78,14 +78,13 @@ struct DayView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack {
-                Button {
-                    navigateDay(by: -1)
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(.appPrimary)
-                        .frame(width: 44, height: 44)
-                }
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(.appPrimary)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+                    .onTapGesture { navigateDay(by: -1) }
+                    .onLongPressGesture { currentDate = Date() }
 
                 Spacer()
 
@@ -95,14 +94,13 @@ struct DayView: View {
 
                 Spacer()
 
-                Button {
-                    navigateDay(by: 1)
-                } label: {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(.appPrimary)
-                        .frame(width: 44, height: 44)
-                }
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(.appPrimary)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+                    .onTapGesture { navigateDay(by: 1) }
+                    .onLongPressGesture { currentDate = Date() }
             }
             .padding(.horizontal, 8)
 
