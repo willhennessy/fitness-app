@@ -30,11 +30,16 @@ struct DayView: View {
             Color.appBackground
                 .ignoresSafeArea()
 
-            if showCelebration {
-                Celebration {
-                    showCelebration = false
+            mainContent
+                .opacity(opacity)
+                .onAppear {
+                    withAnimation(.easeIn(duration: 0.3)) {
+                        opacity = 1
+                    }
                 }
-            } else if let exercise = selectedExercise {
+                .allowsHitTesting(selectedExercise == nil)
+
+            if let exercise = selectedExercise {
                 ExerciseDetail(
                     exercise: exercise,
                     date: currentDate,
@@ -50,14 +55,12 @@ struct DayView: View {
                 )
                 .id(exercise.id)
                 .transition(.move(edge: .trailing))
-            } else {
-                mainContent
-                    .opacity(opacity)
-                    .onAppear {
-                        withAnimation(.easeIn(duration: 0.3)) {
-                            opacity = 1
-                        }
-                    }
+            }
+
+            if showCelebration {
+                Celebration {
+                    showCelebration = false
+                }
             }
         }
     }
