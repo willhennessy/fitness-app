@@ -15,6 +15,8 @@ struct ExerciseDetail: View {
     @State private var distance: Double = 3.1
     @State private var time: Int = 31
     @State private var isSaved: Bool = false
+    @State private var dragOffset: CGFloat = 0
+    @State private var isDraggingHorizontally: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -165,9 +167,52 @@ struct ExerciseDetail: View {
             }
         }
         .background(Color.appBackground)
+        .offset(x: dragOffset)
+        .overlay(alignment: .leading) {
+            Color.clear
+                .frame(width: 20)
+                .contentShape(Rectangle())
+                .gesture(swipeBackGesture)
+        }
         .onAppear {
             loadValues()
         }
+    }
+
+    private var swipeBackGesture: some Gesture {
+        DragGesture(minimumDistance: 10, coordinateSpace: .local)
+            .onChanged { value in
+                let horizontal = value.translation.width
+                let vertical = value.translation.height
+
+                if !isDraggingHorizontally {
+                    guard abs(horizontal) > abs(vertical) && horizontal > 0 else { return }
+                    isDraggingHorizontally = true
+                }
+
+                if horizontal > 0 {
+                    dragOffset = horizontal
+                }
+            }
+            .onEnded { value in
+                isDraggingHorizontally = false
+
+                let shouldDismiss = value.translation.width > 80
+                    || value.predictedEndTranslation.width > 200
+
+                if shouldDismiss {
+                    withAnimation(.easeOut(duration: 0.25)) {
+                        dragOffset = UIScreen.main.bounds.width
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        onBack()
+                    }
+                } else {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                        dragOffset = 0
+                    }
+                }
+            }
     }
 
     private var placeholderImage: some View {
