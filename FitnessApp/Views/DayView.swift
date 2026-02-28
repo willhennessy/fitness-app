@@ -6,6 +6,14 @@ struct DayView: View {
     @State private var selectedExerciseIndex: Int = 0
     @State private var showCelebration: Bool = false
     @State private var opacity: Double = 0
+    @State private var daySwipeOffset: CGFloat = 0
+    @State private var isDayNavigating: Bool = false
+    @State private var isDaySwipeActive: Bool = false
+    @State private var isDayScrollLocked: Bool = false
+    @State private var swipeConsumedTouch: Bool = false
+    @State private var incomingDate: Date? = nil
+    @State private var incomingOffsetSign: CGFloat = 1
+    @State private var navigationGeneration: Int = 0
 
     @EnvironmentObject var storage: StorageManager
 
@@ -25,6 +33,11 @@ struct DayView: View {
         routine?.exercises.count ?? 0
     }
 
+    private func routineFor(date: Date) -> DayRoutine? {
+        let dow = Calendar.current.component(.weekday, from: date) - 1
+        return getRoutineForDay(dow)
+    }
+
     var body: some View {
         ZStack {
             Color.appBackground
@@ -38,6 +51,7 @@ struct DayView: View {
                     }
                 }
                 .allowsHitTesting(selectedExercise == nil)
+                .simultaneousGesture(dayNavigationGesture)
 
             if let exercise = selectedExercise {
                 ExerciseDetail(
@@ -67,14 +81,27 @@ struct DayView: View {
 
     private var mainContent: some View {
         VStack(spacing: 0) {
-            // Header
             header
 
-            if routine?.isRestDay == true {
-                RestDay(dayName: currentDate.formatted(.dateTime.weekday(.wide)))
-            } else {
-                exerciseList
+            ZStack {
+                if let incoming = incomingDate {
+                    contentGroup(for: incoming)
+                        .offset(x: daySwipeOffset + incomingOffsetSign * UIScreen.main.bounds.width)
+                        .allowsHitTesting(false)
+                }
+                contentGroup(for: currentDate)
+                    .offset(x: daySwipeOffset)
             }
+            .clipped()
+        }
+    }
+
+    @ViewBuilder
+    private func contentGroup(for date: Date) -> some View {
+        if routineFor(date: date)?.isRestDay == true {
+            RestDay(dayName: date.formatted(.dateTime.weekday(.wide)))
+        } else {
+            exerciseList(for: date)
         }
     }
 
@@ -112,18 +139,21 @@ struct DayView: View {
         }
     }
 
-    private var exerciseList: some View {
-        ScrollView {
+    private func exerciseList(for date: Date) -> some View {
+        let r = routineFor(date: date)
+        let completed = storage.getCompletedCount(for: date)
+        let total = r?.exercises.count ?? 0
+        return ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Title row with progress badge
                 HStack {
-                    Text(routine?.name ?? "")
+                    Text(r?.name ?? "")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.appText)
 
                     Spacer()
 
-                    Text("\(completedCount)/\(totalExercises)")
+                    Text("\(completed)/\(total)")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.appTextMuted)
                         .padding(.horizontal, 12)
@@ -135,31 +165,30 @@ struct DayView: View {
                 .padding(.top, 16)
 
                 // Progress bar - only show if at least 1 completed
-                if completedCount > 0 {
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(Color.appSurface)
-                                .frame(height: 4)
-
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(Color.appPrimary)
-                                .frame(width: geo.size.width * CGFloat(completedCount) / CGFloat(totalExercises), height: 4)
-                                .animation(.easeInOut(duration: 0.3), value: completedCount)
+                if completed > 0 {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.appSurface)
+                        .frame(height: 4)
+                        .overlay(alignment: .leading) {
+                            GeometryReader { geo in
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(Color.appPrimary)
+                                    .frame(width: geo.size.width * min(CGFloat(completed) / CGFloat(total), 1.0), height: 4)
+                                    .animation(.easeInOut(duration: 0.3), value: completed)
+                            }
                         }
-                    }
-                    .frame(height: 4)
-                    .padding(.horizontal, 16)
+                        .padding(.horizontal, 16)
                 }
 
                 // Exercise cards
                 VStack(spacing: 16) {
-                    if let exercises = routine?.exercises {
+                    if let exercises = r?.exercises {
                         ForEach(Array(exercises.enumerated()), id: \.element.id) { index, exercise in
-                            let isCompleted = storage.isExerciseCompleted(exercise.id, for: currentDate)
-                            let loggedExercise = storage.getLoggedExercise(exercise.id, for: currentDate)
+                            let isCompleted = storage.isExerciseCompleted(exercise.id, for: date)
+                            let loggedExercise = storage.getLoggedExercise(exercise.id, for: date)
 
                             Button {
+                                guard !swipeConsumedTouch else { return }
                                 selectedExerciseIndex = index
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     selectedExercise = exercise
@@ -179,16 +208,98 @@ struct DayView: View {
                 .padding(.bottom, 32)
             }
         }
+        .scrollDisabled(isDaySwipeActive)
     }
 
     private func navigateDay(by days: Int) {
-        if let newDate = Calendar.current.date(byAdding: .day, value: days, to: currentDate) {
+        guard !isDayNavigating else { return }
+        commitDayNavigation(days: days)
+    }
+
+    private func commitDayNavigation(days: Int) {
+        guard let newDate = Calendar.current.date(byAdding: .day, value: days, to: currentDate) else { return }
+        isDayNavigating = true
+        incomingDate = newDate
+        incomingOffsetSign = days > 0 ? 1 : -1
+        let screenWidth = UIScreen.main.bounds.width
+        let targetOffset: CGFloat = days > 0 ? -screenWidth : screenWidth
+        navigationGeneration += 1
+        let generation = navigationGeneration
+
+        withAnimation(.easeInOut(duration: 0.35)) {
+            daySwipeOffset = targetOffset
+        } completion: {
+            guard navigationGeneration == generation else { return }
             currentDate = newDate
+            incomingDate = nil
+            daySwipeOffset = 0
+            isDayNavigating = false
         }
     }
 
+    private var dayNavigationGesture: some Gesture {
+        DragGesture(minimumDistance: 15)
+            .onChanged { value in
+                let h = value.translation.width
+                let v = value.translation.height
+
+                if !isDaySwipeActive && !isDayScrollLocked {
+                    // New gesture started while a navigation animation is in progress:
+                    // snap it to its final state so the new gesture begins cleanly.
+                    if isDayNavigating {
+                        navigationGeneration += 1
+                        isDayNavigating = false
+                        currentDate = incomingDate ?? currentDate
+                        incomingDate = nil
+                        withAnimation(nil) { daySwipeOffset = 0 }
+                    }
+
+                    if abs(v) > abs(h) {
+                        isDayScrollLocked = true   // vertical won — lock out horizontal
+                        return
+                    }
+                    // Require h:v ratio > 2.4:1 (≈ ±22.5° from horizontal, a 45° total cone)
+                    guard abs(h) > abs(v) * 2.4 && abs(h) > 10 else { return }
+                    isDaySwipeActive = true        // horizontal won — lock out vertical
+                    swipeConsumedTouch = true
+                    incomingOffsetSign = h > 0 ? -1 : 1
+                    incomingDate = Calendar.current.date(byAdding: .day, value: h > 0 ? -1 : 1, to: currentDate)
+                }
+
+                guard isDaySwipeActive else { return }
+                let screenWidth = UIScreen.main.bounds.width
+                withAnimation(nil) {
+                    daySwipeOffset = max(-screenWidth, min(screenWidth, h))
+                }
+            }
+            .onEnded { value in
+                // Snapshot before clearing — needed to gate navigation below
+                let wasSwipeActive = isDaySwipeActive
+                isDaySwipeActive = false
+                isDayScrollLocked = false
+                DispatchQueue.main.async { swipeConsumedTouch = false }
+                // Only commit or snap-back if this gesture was actually a horizontal swipe
+                guard wasSwipeActive, !isDayNavigating else { return }
+                let h = value.translation.width
+                let predicted = value.predictedEndTranslation.width
+                if abs(h) > 50 || abs(predicted) > 200 {
+                    commitDayNavigation(days: h > 0 ? -1 : 1)
+                } else {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                        daySwipeOffset = 0
+                    } completion: {
+                        incomingDate = nil
+                    }
+                }
+            }
+    }
+
     private func handleExerciseSave() {
-        guard let exercises = routine?.exercises else { return }
+        guard let exercises = routine?.exercises,
+              selectedExerciseIndex < exercises.count else {
+            withAnimation(.easeInOut(duration: 0.3)) { selectedExercise = nil }
+            return
+        }
 
         // Check if this was the last exercise
         if selectedExerciseIndex == exercises.count - 1 {

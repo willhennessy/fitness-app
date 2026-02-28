@@ -118,7 +118,7 @@ let weeklyRoutine: [DayRoutine] = [
                 id: "bulgarian-split-squat",
                 name: "Bulgarian Split Squat",
                 sets: 3,
-                reps: "8 each leg",
+                reps: "8 per leg",
                 images: [
                     "https://weighttraining.guide/wp-content/uploads/2021/10/Bulgarian-split-squat.png"
                 ],
@@ -321,7 +321,7 @@ let weeklyRoutine: [DayRoutine] = [
                 id: "walking-lunge",
                 name: "Dumbbell Walking Lunges",
                 sets: 3,
-                reps: "10 steps each leg",
+                reps: "10 per leg",
                 images: [
                     "https://cdn.muscleandstrength.com/sites/default/files/dumbbell-walking-lunge.jpg"
                 ],
