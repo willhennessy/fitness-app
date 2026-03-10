@@ -164,21 +164,19 @@ struct DayView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
 
-                // Progress bar - only show if at least 1 completed
-                if completed > 0 {
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(Color.appSurface)
-                        .frame(height: 4)
-                        .overlay(alignment: .leading) {
-                            GeometryReader { geo in
-                                RoundedRectangle(cornerRadius: 2)
-                                    .fill(Color.appPrimary)
-                                    .frame(width: geo.size.width * min(CGFloat(completed) / CGFloat(total), 1.0), height: 4)
-                                    .animation(.easeInOut(duration: 0.3), value: completed)
-                            }
+                // Progress bar
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.appSurface)
+                    .frame(height: 4)
+                    .overlay(alignment: .leading) {
+                        GeometryReader { geo in
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.appPrimary)
+                                .frame(width: geo.size.width * min(CGFloat(completed) / CGFloat(total), 1.0), height: 4)
+                                .animation(.easeInOut(duration: 0.3), value: completed)
                         }
-                        .padding(.horizontal, 16)
-                }
+                    }
+                    .padding(.horizontal, 16)
 
                 // Exercise cards
                 VStack(spacing: 16) {
