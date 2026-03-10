@@ -3,6 +3,7 @@ import Foundation
 func formatISO(_ date: Date) -> String {
     let formatter = ISO8601DateFormatter()
     formatter.formatOptions = [.withFullDate]
+    formatter.timeZone = TimeZone.current
     return formatter.string(from: date)
 }
 
