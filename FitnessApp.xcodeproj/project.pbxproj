@@ -391,6 +391,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				INFOPLIST_KEY_CFBundleDisplayName = Fitness;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.willhennessy.FitnessApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -418,6 +419,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				INFOPLIST_KEY_CFBundleDisplayName = Fitness;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.willhennessy.FitnessApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
