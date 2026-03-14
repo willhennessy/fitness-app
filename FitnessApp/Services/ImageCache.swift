@@ -36,13 +36,33 @@ class ImageCache {
         }
     }
 
+    func invalidateIfURLsChanged(_ urls: [String]) {
+        let storageKey = "ImageCache.urlsHash"
+        let hash = fnv1a(urls.joined())
+        let stored = UserDefaults.standard.string(forKey: storageKey)
+        if stored != hash {
+            clearAll()
+            UserDefaults.standard.set(hash, forKey: storageKey)
+        }
+    }
+
+    private func clearAll() {
+        memoryCache.removeAllObjects()
+        try? FileManager.default.removeItem(at: cacheDirectory)
+        try? FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
+    }
+
     // FNV-1a hash — stable across launches, unlike Swift's hashValue
     private func stableKey(for url: URL) -> String {
+        return "\(fnv1a(url.absoluteString)).jpg"
+    }
+
+    private func fnv1a(_ string: String) -> String {
         var hash: UInt64 = 14695981039346656037
-        for byte in url.absoluteString.utf8 {
+        for byte in string.utf8 {
             hash ^= UInt64(byte)
             hash = hash &* 1099511628211
         }
-        return "\(hash).jpg"
+        return "\(hash)"
     }
 }

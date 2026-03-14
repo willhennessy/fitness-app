@@ -171,7 +171,7 @@ let weeklyRoutine: [DayRoutine] = [
                 name: "Run",
                 sets: 1,
                 reps: "3.1 mi",
-                images: ["https://hips.hearstapps.com/hmg-prod/images/young-man-running-outdoors-in-morning-royalty-free-image-1717693611.jpg?crop=0.628xw:0.940xh;0.0705xw,0.0600xh&resize=1200:*"],
+                images: ["https://media.timeout.com/images/105305488/750/422/image.jpg"],
                 cues: [
                     "You should be able to speak in full sentences",
                     "Nasal breathing most of the time if possible",
@@ -301,39 +301,42 @@ let weeklyRoutine: [DayRoutine] = [
                 id: "walk",
                 name: "Walk",
                 sets: 1,
-                reps: "30 min",
-                images: ["https://hips.hearstapps.com/hmg-prod/images/young-man-running-outdoors-in-morning-royalty-free-image-1717693611.jpg?crop=0.628xw:0.940xh;0.0705xw,0.0600xh&resize=1200:*"],
+                reps: "30 mins",
+                images: ["https://media.timeout.com/images/105305488/750/422/image.jpg"],
                 cues: [
                     "Easy pace — conversational effort",
                     "Stay off your phone; let your mind rest too"
                 ],
-                why: "Low-impact movement promotes blood flow, speeds recovery, and supports aerobic base without adding training stress."
+                why: "Low-impact movement promotes blood flow, speeds recovery, and supports aerobic base without adding training stress.",
+                isTimedOnly: true
             ),
             Exercise(
                 id: "stretch",
                 name: "Stretch",
                 sets: 1,
-                reps: "10 min",
+                reps: "10 mins",
                 images: ["https://cdn.shopify.com/s/files/1/0053/0114/1604/files/natural-force-blog-natural-force-blog-yoga-poses-recovery-featured_v1.jpg?v=1547164717"],
                 cues: [
                     "Focus on hips, hamstrings, and thoracic spine",
                     "Hold each stretch 30–60 seconds",
                     "Breathe slowly; don't force range"
                 ],
-                why: "Static stretching on rest days reduces muscle tension, improves flexibility over time, and supports joint health."
+                why: "Static stretching on rest days reduces muscle tension, improves flexibility over time, and supports joint health.",
+                isTimedOnly: true
             ),
             Exercise(
                 id: "foam-roll",
                 name: "Foam Roll",
                 sets: 1,
-                reps: "5 min",
-                images: ["https://hips.hearstapps.com/hmg-prod/images/foam-rolling-1590671187.jpg"],
+                reps: "5 mins",
+                images: ["https://thenaturalposture.com/cdn/shop/articles/Man-Lying-On-A-Foam-Roller-Whi-115095869_1600x.jpg?v=1492571798"],
                 cues: [
                     "Roll slowly; pause on tight spots for 20–30 seconds",
                     "Avoid rolling directly on joints",
                     "Keep breathing throughout"
                 ],
-                why: "Self-myofascial release reduces muscle soreness, improves tissue quality, and prepares muscles for the next session."
+                why: "Self-myofascial release reduces muscle soreness, improves tissue quality, and prepares muscles for the next session.",
+                isTimedOnly: true
             )
         ]
     ),
@@ -440,39 +443,42 @@ let weeklyRoutine: [DayRoutine] = [
                 id: "walk",
                 name: "Walk",
                 sets: 1,
-                reps: "30 min",
-                images: ["https://hips.hearstapps.com/hmg-prod/images/young-man-running-outdoors-in-morning-royalty-free-image-1717693611.jpg?crop=0.628xw:0.940xh;0.0705xw,0.0600xh&resize=1200:*"],
+                reps: "30 mins",
+                images: ["https://media.timeout.com/images/105305488/750/422/image.jpg"],
                 cues: [
                     "Easy pace — conversational effort",
                     "Stay off your phone; let your mind rest too"
                 ],
-                why: "Low-impact movement promotes blood flow, speeds recovery, and supports aerobic base without adding training stress."
+                why: "Low-impact movement promotes blood flow, speeds recovery, and supports aerobic base without adding training stress.",
+                isTimedOnly: true
             ),
             Exercise(
                 id: "stretch",
                 name: "Stretch",
                 sets: 1,
-                reps: "10 min",
+                reps: "10 mins",
                 images: ["https://cdn.shopify.com/s/files/1/0053/0114/1604/files/natural-force-blog-natural-force-blog-yoga-poses-recovery-featured_v1.jpg?v=1547164717"],
                 cues: [
                     "Focus on hips, hamstrings, and thoracic spine",
                     "Hold each stretch 30–60 seconds",
                     "Breathe slowly; don't force range"
                 ],
-                why: "Static stretching on rest days reduces muscle tension, improves flexibility over time, and supports joint health."
+                why: "Static stretching on rest days reduces muscle tension, improves flexibility over time, and supports joint health.",
+                isTimedOnly: true
             ),
             Exercise(
                 id: "foam-roll",
                 name: "Foam Roll",
                 sets: 1,
-                reps: "5 min",
-                images: ["https://hips.hearstapps.com/hmg-prod/images/foam-rolling-1590671187.jpg"],
+                reps: "5 mins",
+                images: ["https://thenaturalposture.com/cdn/shop/articles/Man-Lying-On-A-Foam-Roller-Whi-115095869_1600x.jpg?v=1492571798"],
                 cues: [
                     "Roll slowly; pause on tight spots for 20–30 seconds",
                     "Avoid rolling directly on joints",
                     "Keep breathing throughout"
                 ],
-                why: "Self-myofascial release reduces muscle soreness, improves tissue quality, and prepares muscles for the next session."
+                why: "Self-myofascial release reduces muscle soreness, improves tissue quality, and prepares muscles for the next session.",
+                isTimedOnly: true
             )
         ]
     )

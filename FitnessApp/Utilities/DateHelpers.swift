@@ -65,6 +65,25 @@ func getLastRunValues(for exercise: Exercise, on date: Date, storage: StorageMan
     return (3.1, 31)
 }
 
+
+func getLastTimedValues(for exercise: Exercise, on date: Date, storage: StorageManager) -> Int {
+    let calendar = Calendar.current
+
+    for weeksBack in 1...4 {
+        if let pastDate = calendar.date(byAdding: .weekOfYear, value: -weeksBack, to: date) {
+            let pastDateISO = formatISO(pastDate)
+
+            if let entry = storage.getEntry(for: pastDateISO),
+               let logged = entry.exercises.first(where: { $0.exerciseId == exercise.id }),
+               let time = logged.timeMinutes {
+                return time
+            }
+        }
+    }
+
+    return parseReps(exercise.reps)
+}
+
 func getLastWeekValues(for exercise: Exercise, on date: Date, storage: StorageManager) -> (weight: Int, sets: Int, reps: Int) {
     let calendar = Calendar.current
 

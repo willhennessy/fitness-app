@@ -14,6 +14,7 @@ struct ExerciseDetail: View {
     @State private var reps: Int = 10
     @State private var distance: Double = 3.1
     @State private var time: Int = 31
+    @State private var timedMinutes: Int = 10
     @State private var isSaved: Bool = false
     @State private var dragOffset: CGFloat = 0
     @State private var isDraggingHorizontally: Bool = false
@@ -76,6 +77,8 @@ struct ExerciseDetail: View {
                                 .padding(.horizontal, 16)
 
                             WorkoutStepper(label: "Time (min)", value: $time, range: 1...180, step: 1)
+                        } else if exercise.isTimedOnly {
+                            WorkoutStepper(label: "Time (min)", value: $timedMinutes, range: 1...120, step: 1)
                         } else {
                             WorkoutStepper(label: "Weight", value: $weight, range: 0...500, step: 5)
 
@@ -241,6 +244,18 @@ struct ExerciseDetail: View {
             return
         }
 
+        if exercise.isTimedOnly {
+            if let logged = storage.getLoggedExercise(exercise.id, for: date),
+               let t = logged.timeMinutes {
+                timedMinutes = t
+                isSaved = true
+            } else {
+                timedMinutes = getLastTimedValues(for: exercise, on: date, storage: storage)
+                isSaved = false
+            }
+            return
+        }
+
         // Check if already logged today
         if let logged = storage.getLoggedExercise(exercise.id, for: date) {
             weight = logged.weightUsed
@@ -268,6 +283,16 @@ struct ExerciseDetail: View {
                 repsCompleted: 0,
                 distanceMiles: distance,
                 timeMinutes: time,
+                timestamp: Date()
+            )
+        } else if exercise.isTimedOnly {
+            logged = LoggedExercise(
+                exerciseId: exercise.id,
+                weightUsed: 0,
+                setsCompleted: 0,
+                repsCompleted: 0,
+                distanceMiles: nil,
+                timeMinutes: timedMinutes,
                 timestamp: Date()
             )
         } else {

@@ -66,6 +66,12 @@ struct ExerciseCard: View {
             }
             return "5k (3.1 miles) \u{00B7} 30 min"
         }
+        if exercise.isTimedOnly {
+            if let t = loggedExercise?.timeMinutes {
+                return "\(t) mins"
+            }
+            return exercise.reps
+        }
         if let weight = loggedExercise?.weightUsed, weight > 0 {
             return "\(weight) lbs \u{00B7} \(exercise.sets) sets \u{00D7} \(exercise.reps)"
         }

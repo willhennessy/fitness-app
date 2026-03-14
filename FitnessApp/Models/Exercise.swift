@@ -9,4 +9,5 @@ struct Exercise: Identifiable, Codable {
     let cues: [String]
     let why: String
     var isRun: Bool = false
+    var isTimedOnly: Bool = false
 }
