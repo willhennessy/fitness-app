@@ -3,11 +3,13 @@ import Foundation
 class StorageManager: ObservableObject {
     static let shared = StorageManager()
     private let key = "fitness-app-data"
+    private var entryIndexByDate: [String: Int] = [:]
 
     @Published private(set) var entries: [DayEntry] = []
 
     private init() {
         entries = loadEntries()
+        rebuildIndex()
     }
 
     private func loadEntries() -> [DayEntry] {
@@ -19,14 +21,15 @@ class StorageManager: ObservableObject {
     }
 
     func getEntries() -> [DayEntry] {
-        return entries
+        entries
     }
 
     func saveEntry(_ entry: DayEntry) {
-        if let index = entries.firstIndex(where: { $0.date == entry.date }) {
+        if let index = entryIndexByDate[entry.date] {
             entries[index] = entry
         } else {
             entries.append(entry)
+            entryIndexByDate[entry.date] = entries.count - 1
         }
         if let data = try? JSONEncoder().encode(entries) {
             UserDefaults.standard.set(data, forKey: key)
@@ -34,7 +37,10 @@ class StorageManager: ObservableObject {
     }
 
     func getEntry(for date: String) -> DayEntry? {
-        entries.first { $0.date == date }
+        guard let index = entryIndexByDate[date], entries.indices.contains(index) else {
+            return nil
+        }
+        return entries[index]
     }
 
     func logExercise(_ logged: LoggedExercise, for date: Date) {
@@ -67,5 +73,14 @@ class StorageManager: ObservableObject {
     func getCompletedCount(for date: Date) -> Int {
         let dateISO = formatISO(date)
         return getEntry(for: dateISO)?.exercises.count ?? 0
+    }
+
+    private func rebuildIndex() {
+        entryIndexByDate.removeAll(keepingCapacity: true)
+        for (index, entry) in entries.enumerated() {
+            if entryIndexByDate[entry.date] == nil {
+                entryIndexByDate[entry.date] = index
+            }
+        }
     }
 }

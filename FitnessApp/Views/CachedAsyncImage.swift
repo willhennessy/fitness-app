@@ -13,23 +13,29 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
                 content(Image(uiImage: image))
             } else {
                 placeholder()
-                    .task { await load() }
             }
+        }
+        .task(id: url) {
+            await load(for: url)
         }
     }
 
-    private func load() async {
-        guard let url else { return }
+    private func load(for targetURL: URL?) async {
+        guard let targetURL else {
+            image = nil
+            return
+        }
 
-        if let cached = ImageCache.shared.image(for: url) {
+        if let cached = ImageCache.shared.image(for: targetURL) {
             image = cached
             return
         }
 
-        guard let (data, _) = try? await URLSession.shared.data(from: url),
+        guard let (data, _) = try? await URLSession.shared.data(from: targetURL),
               let loaded = UIImage(data: data) else { return }
 
-        ImageCache.shared.store(loaded, for: url)
+        ImageCache.shared.store(loaded, for: targetURL)
+        guard url == targetURL else { return }
         image = loaded
     }
 }

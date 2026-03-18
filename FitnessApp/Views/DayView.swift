@@ -143,6 +143,12 @@ struct DayView: View {
         let r = routineFor(date: date)
         let completed = storage.getCompletedCount(for: date)
         let total = r?.exercises.count ?? 0
+        let loggedByExerciseId = (storage.getEntry(for: formatISO(date))?.exercises ?? [])
+            .reduce(into: [String: LoggedExercise]()) { dict, logged in
+                if dict[logged.exerciseId] == nil {
+                    dict[logged.exerciseId] = logged
+                }
+            }
         return ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Title row with progress badge
@@ -172,7 +178,12 @@ struct DayView: View {
                         GeometryReader { geo in
                             RoundedRectangle(cornerRadius: 2)
                                 .fill(Color.appPrimary)
-                                .frame(width: geo.size.width * min(CGFloat(completed) / CGFloat(total), 1.0), height: 4)
+                                .frame(
+                                    width: geo.size.width * (
+                                        total > 0 ? min(CGFloat(completed) / CGFloat(total), 1.0) : 0
+                                    ),
+                                    height: 4
+                                )
                                 .animation(.easeInOut(duration: 0.3), value: completed)
                         }
                     }
@@ -182,8 +193,8 @@ struct DayView: View {
                 VStack(spacing: 16) {
                     if let exercises = r?.exercises {
                         ForEach(Array(exercises.enumerated()), id: \.element.id) { index, exercise in
-                            let isCompleted = storage.isExerciseCompleted(exercise.id, for: date)
-                            let loggedExercise = storage.getLoggedExercise(exercise.id, for: date)
+                            let loggedExercise = loggedByExerciseId[exercise.id]
+                            let isCompleted = loggedExercise != nil
 
                             Button {
                                 guard !swipeConsumedTouch else { return }
