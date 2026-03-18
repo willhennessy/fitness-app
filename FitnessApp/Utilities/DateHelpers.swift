@@ -1,10 +1,7 @@
 import Foundation
 
 func formatISO(_ date: Date) -> String {
-    let formatter = ISO8601DateFormatter()
-    formatter.formatOptions = [.withFullDate]
-    formatter.timeZone = TimeZone.current
-    return formatter.string(from: date)
+    DateFormatting.isoDateFormatter.string(from: date)
 }
 
 func startOfDay(_ date: Date) -> Date {
@@ -47,19 +44,10 @@ func parseReps(_ reps: String) -> Int {
 }
 
 func getLastRunValues(for exercise: Exercise, on date: Date, storage: StorageManager) -> (distance: Double, time: Int) {
-    let calendar = Calendar.current
-
-    for weeksBack in 1...4 {
-        if let pastDate = calendar.date(byAdding: .weekOfYear, value: -weeksBack, to: date) {
-            let pastDateISO = formatISO(pastDate)
-
-            if let entry = storage.getEntry(for: pastDateISO),
-               let logged = entry.exercises.first(where: { $0.exerciseId == exercise.id }),
-               let distance = logged.distanceMiles,
-               let time = logged.timeMinutes {
-                return (distance, time)
-            }
-        }
+    if let logged = recentLoggedExercise(for: exercise, on: date, storage: storage),
+       let distance = logged.distanceMiles,
+       let time = logged.timeMinutes {
+        return (distance, time)
     }
 
     return (3.1, 31)
@@ -67,36 +55,45 @@ func getLastRunValues(for exercise: Exercise, on date: Date, storage: StorageMan
 
 
 func getLastTimedValues(for exercise: Exercise, on date: Date, storage: StorageManager) -> Int {
-    let calendar = Calendar.current
-
-    for weeksBack in 1...4 {
-        if let pastDate = calendar.date(byAdding: .weekOfYear, value: -weeksBack, to: date) {
-            let pastDateISO = formatISO(pastDate)
-
-            if let entry = storage.getEntry(for: pastDateISO),
-               let logged = entry.exercises.first(where: { $0.exerciseId == exercise.id }),
-               let time = logged.timeMinutes {
-                return time
-            }
-        }
+    if let logged = recentLoggedExercise(for: exercise, on: date, storage: storage),
+       let time = logged.timeMinutes {
+        return time
     }
 
     return parseReps(exercise.reps)
 }
 
 func getLastWeekValues(for exercise: Exercise, on date: Date, storage: StorageManager) -> (weight: Int, sets: Int, reps: Int) {
-    let calendar = Calendar.current
-
-    for weeksBack in 1...4 {
-        if let pastDate = calendar.date(byAdding: .weekOfYear, value: -weeksBack, to: date) {
-            let pastDateISO = formatISO(pastDate)
-
-            if let entry = storage.getEntry(for: pastDateISO),
-               let logged = entry.exercises.first(where: { $0.exerciseId == exercise.id }) {
-                return (logged.weightUsed, logged.setsCompleted, logged.repsCompleted)
-            }
-        }
+    if let logged = recentLoggedExercise(for: exercise, on: date, storage: storage) {
+        return (logged.weightUsed, logged.setsCompleted, logged.repsCompleted)
     }
 
     return (0, exercise.sets, parseReps(exercise.reps))
+}
+
+private enum DateFormatting {
+    static let isoDateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        formatter.timeZone = .autoupdatingCurrent
+        return formatter
+    }()
+}
+
+private func recentLoggedExercise(for exercise: Exercise, on date: Date, storage: StorageManager) -> LoggedExercise? {
+    let calendar = Calendar.current
+
+    for weeksBack in 1...4 {
+        guard let pastDate = calendar.date(byAdding: .weekOfYear, value: -weeksBack, to: date) else {
+            continue
+        }
+
+        let pastDateISO = formatISO(pastDate)
+        if let entry = storage.getEntry(for: pastDateISO),
+           let logged = entry.exercises.first(where: { $0.exerciseId == exercise.id }) {
+            return logged
+        }
+    }
+
+    return nil
 }

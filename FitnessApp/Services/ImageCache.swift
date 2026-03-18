@@ -10,6 +10,7 @@ class ImageCache {
         let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
         cacheDirectory = caches.appendingPathComponent("ImageCache")
         try? FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
+        memoryCache.countLimit = 200
     }
 
     func image(for url: URL) -> UIImage? {
@@ -29,10 +30,11 @@ class ImageCache {
         let key = url.absoluteString as NSString
         memoryCache.setObject(image, forKey: key)
         let fileURL = cacheDirectory.appendingPathComponent(stableKey(for: url))
-        Task.detached {
-            if let data = image.jpegData(compressionQuality: 1.0) {
-                try? data.write(to: fileURL)
-            }
+
+        guard let data = image.jpegData(compressionQuality: 1.0) else { return }
+
+        Task(priority: .utility) {
+            try? data.write(to: fileURL, options: .atomic)
         }
     }
 
