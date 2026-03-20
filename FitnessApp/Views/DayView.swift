@@ -206,7 +206,8 @@ struct DayView: View {
                                 ExerciseCard(
                                     exercise: exercise,
                                     isCompleted: isCompleted,
-                                    loggedExercise: loggedExercise
+                                    loggedExercise: loggedExercise,
+                                    date: date
                                 )
                             }
                             .buttonStyle(PlainButtonStyle())
