@@ -4,6 +4,9 @@ struct ExerciseCard: View {
     let exercise: Exercise
     let isCompleted: Bool
     let loggedExercise: LoggedExercise?
+    let date: Date
+
+    @EnvironmentObject var storage: StorageManager
 
     var body: some View {
         HStack(spacing: 12) {
@@ -64,18 +67,27 @@ struct ExerciseCard: View {
             if let d = loggedExercise?.distanceMiles, let t = loggedExercise?.timeMinutes {
                 return String(format: "%.1f mi \u{00B7} %d min", d, t)
             }
-            return "5k (3.1 miles) \u{00B7} 30 min"
+            let (d, t) = getLastRunValues(for: exercise, on: date, storage: storage)
+            return String(format: "%.1f mi \u{00B7} %d min", d, t)
         }
         if exercise.isTimedOnly {
             if let t = loggedExercise?.timeMinutes {
                 return "\(t) mins"
             }
-            return exercise.reps
+            let t = getLastTimedValues(for: exercise, on: date, storage: storage)
+            return "\(t) mins"
         }
-        if let weight = loggedExercise?.weightUsed, weight > 0 {
-            return "\(weight) lbs \u{00B7} \(exercise.sets) sets \u{00D7} \(exercise.reps)"
+        if let logged = loggedExercise {
+            if logged.weightUsed > 0 {
+                return "\(logged.weightUsed) lbs \u{00B7} \(logged.setsCompleted) sets \u{00D7} \(logged.repsCompleted)"
+            }
+            return "\(logged.setsCompleted) sets \u{00D7} \(logged.repsCompleted)"
         }
-        return "\(exercise.sets) sets \u{00D7} \(exercise.reps)"
+        let (weight, sets, reps) = getLastWeekValues(for: exercise, on: date, storage: storage)
+        if weight > 0 {
+            return "\(weight) lbs \u{00B7} \(sets) sets \u{00D7} \(reps)"
+        }
+        return "\(sets) sets \u{00D7} \(reps)"
     }
 }
 
@@ -86,7 +98,8 @@ struct ExerciseCard: View {
             ExerciseCard(
                 exercise: weeklyRoutine[1].exercises[0],
                 isCompleted: false,
-                loggedExercise: nil
+                loggedExercise: nil,
+                date: Date()
             )
             ExerciseCard(
                 exercise: weeklyRoutine[1].exercises[0],
@@ -96,9 +109,11 @@ struct ExerciseCard: View {
                     setsCompleted: 4, repsCompleted: 6,
                     distanceMiles: nil, timeMinutes: nil,
                     timestamp: Date()
-                )
+                ),
+                date: Date()
             )
         }
         .padding()
     }
+    .environmentObject(StorageManager.shared)
 }
