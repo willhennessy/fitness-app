@@ -11,10 +11,13 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
         Group {
             if let image {
                 content(Image(uiImage: image))
+                    .transition(.opacity)
             } else {
                 placeholder()
+                    .transition(.opacity)
             }
         }
+        .animation(.easeOut(duration: 0.2), value: image != nil)
         .task(id: url) {
             await load(for: url)
         }

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct Celebration: View {
     let onDismiss: () -> Void
-    @State private var iconScale: CGFloat = 0.5
+    @State private var iconScale: CGFloat = 0.7
 
     var body: some View {
         ZStack {
@@ -17,13 +17,8 @@ struct Celebration: View {
                     .foregroundColor(.appPrimary)
                     .scaleEffect(iconScale)
                     .onAppear {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.5)) {
-                            iconScale = 1.2
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                            withAnimation(.spring(response: 0.2, dampingFraction: 0.7)) {
-                                iconScale = 1.0
-                            }
+                        withAnimation(.spring(duration: 0.5, bounce: 0.25)) {
+                            iconScale = 1.0
                         }
                     }
 

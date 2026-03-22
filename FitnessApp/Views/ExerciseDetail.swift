@@ -107,18 +107,18 @@ struct ExerciseDetail: View {
                             if isSaved {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 16, weight: .semibold))
-                                Text("Done")
-                                    .font(.system(size: 17, weight: .semibold))
-                            } else {
-                                Text("Done")
-                                    .font(.system(size: 17, weight: .semibold))
+                                    .transition(.scale(scale: 0.5).combined(with: .opacity))
                             }
+                            Text("Done")
+                                .font(.system(size: 17, weight: .semibold))
                         }
+                        .animation(.easeOut(duration: 0.15), value: isSaved)
                         .foregroundColor(isSaved ? .appPrimary : .appBackground)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(isSaved ? Color.appSurface : Color.appPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .animation(.easeOut(duration: 0.15), value: isSaved)
                     }
                     .padding(.horizontal, 16)
 
@@ -211,7 +211,7 @@ struct ExerciseDetail: View {
                         onBack()
                     }
                 } else {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                         dragOffset = 0
                     }
                 }

@@ -1,5 +1,13 @@
 import SwiftUI
 
+private struct StepperButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.88 : 1.0)
+            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
 struct WorkoutStepper: View {
     let label: String
     @Binding var value: Int
@@ -27,6 +35,7 @@ struct WorkoutStepper: View {
                         .background(Color.appSurfaceHover)
                         .clipShape(Circle())
                 }
+                .buttonStyle(StepperButtonStyle())
                 .disabled(value <= range.lowerBound)
 
                 Text("\(value)")
@@ -46,6 +55,7 @@ struct WorkoutStepper: View {
                         .background(Color.appSurfaceHover)
                         .clipShape(Circle())
                 }
+                .buttonStyle(StepperButtonStyle())
                 .disabled(value >= range.upperBound)
             }
         }
@@ -81,6 +91,7 @@ struct DoubleWorkoutStepper: View {
                         .background(Color.appSurfaceHover)
                         .clipShape(Circle())
                 }
+                .buttonStyle(StepperButtonStyle())
                 .disabled(value <= range.lowerBound)
 
                 Text(format(value))
@@ -99,6 +110,7 @@ struct DoubleWorkoutStepper: View {
                         .background(Color.appSurfaceHover)
                         .clipShape(Circle())
                 }
+                .buttonStyle(StepperButtonStyle())
                 .disabled(value >= range.upperBound)
             }
         }
