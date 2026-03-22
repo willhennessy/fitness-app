@@ -46,7 +46,7 @@ struct DayView: View {
             mainContent
                 .opacity(opacity)
                 .onAppear {
-                    withAnimation(.easeIn(duration: 0.3)) {
+                    withAnimation(.easeOut(duration: 0.25)) {
                         opacity = 1
                     }
                 }
@@ -199,7 +199,7 @@ struct DayView: View {
                             Button {
                                 guard !swipeConsumedTouch else { return }
                                 selectedExerciseIndex = index
-                                withAnimation(.easeInOut(duration: 0.3)) {
+                                withAnimation(.easeOut(duration: 0.25)) {
                                     selectedExercise = exercise
                                 }
                             } label: {
@@ -210,7 +210,7 @@ struct DayView: View {
                                     date: date
                                 )
                             }
-                            .buttonStyle(PlainButtonStyle())
+                            .buttonStyle(PressScaleButtonStyle())
                         }
                     }
                 }
@@ -236,7 +236,7 @@ struct DayView: View {
         navigationGeneration += 1
         let generation = navigationGeneration
 
-        withAnimation(.easeInOut(duration: 0.35)) {
+        withAnimation(.easeOut(duration: 0.3)) {
             daySwipeOffset = targetOffset
         } completion: {
             guard navigationGeneration == generation else { return }
@@ -295,7 +295,7 @@ struct DayView: View {
                 if abs(h) > 50 || abs(predicted) > 200 {
                     commitDayNavigation(days: h > 0 ? -1 : 1)
                 } else {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                         daySwipeOffset = 0
                     } completion: {
                         incomingDate = nil
@@ -342,6 +342,14 @@ struct DayView: View {
         withAnimation(.easeInOut(duration: 0.3)) {
             selectedExercise = nil
         }
+    }
+}
+
+private struct PressScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 

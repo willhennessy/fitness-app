@@ -51,6 +51,7 @@ struct ExerciseCard: View {
         .background(Color.appSurface)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .opacity(isCompleted ? 0.5 : 1.0)
+        .animation(.easeOut(duration: 0.2), value: isCompleted)
     }
 
     private var placeholderImage: some View {
