@@ -31,3 +31,6 @@ Podfile.lock
 .vscode/
 .idea/
 .claude/
+
+# Private backups
+/backups/
